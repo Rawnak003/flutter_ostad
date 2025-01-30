@@ -116,7 +116,6 @@ class _HomePageState extends State<HomePage> {
                                       IconButton(
                                           onPressed: () {
                                             _deleteContact(index);
-                                            Navigator.pop(context);
                                           },
                                           icon: const Icon(Icons.delete)),
                                     ],
