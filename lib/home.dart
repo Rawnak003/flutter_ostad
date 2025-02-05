@@ -8,160 +8,100 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> name = [];
-  List<String> phone = [];
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
-  _addContact() {
-    if (_nameController.text.isNotEmpty && _phoneController.text.isNotEmpty) {
-      setState(() {
-        name.add(_nameController.text);
-        phone.add(_phoneController.text);
-        _nameController.clear();
-        _phoneController.clear();
-      });
-    }
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _salaryController = TextEditingController();
+
+  mySnackBar(msg, context) {
+    return ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(msg)));
   }
 
-  _deleteContact(int index) {
-    setState(() {
-      name.removeAt(index);
-      phone.removeAt(index);
-    });
+  _clr() {
+    _nameController.clear();
+    _ageController.clear();
+    _salaryController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Contact List',
-          style: TextStyle(
-              color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          title: const Text(
+            'Add Employee',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 22,
+                fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.white,
+          centerTitle: true,
         ),
-        backgroundColor: Colors.deepPurpleAccent,
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Center(
-          child: Column(
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  labelText: 'Enter Name',
-                ),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              TextField(
-                controller: _phoneController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  labelText: 'Enter Phone Number',
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                  width: screenWidth,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurpleAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        )),
-                    onPressed: () {
-                      _addContact();
+        body: Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: Center(
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(labelText: 'Name'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter name';
+                      }
+                      return null;
                     },
-                    child: const Text(
-                      'Add',
-                      style: TextStyle(
-                          color: Colors.white,
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _ageController,
+                    decoration: const InputDecoration(labelText: 'Age'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter age';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _salaryController,
+                    decoration: const InputDecoration(labelText: 'Salary'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter salary';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24.0),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (formKey.currentState!.validate()) {
+                          mySnackBar("Employee added.", context);
+                          _clr();
+                        }
+                      },
+                      child: const Text(
+                        'Add Employee',
+                        style: TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  )),
-              const SizedBox(
-                height: 20,
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: name.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      margin: const EdgeInsets.all(8),
-                      child: InkWell(
-                        splashColor: Colors.grey.shade200,
-                        onLongPress: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                    actions: [
-                                      IconButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        icon: const Icon(Icons.not_interested),),
-                                      IconButton(
-                                          onPressed: () {
-                                            _deleteContact(index);
-                                            Navigator.pop(context);
-                                          },
-                                          icon: const Icon(Icons.delete)),
-                                    ],
-                                    title: const Text("Confirmation"),
-                                    contentPadding: const EdgeInsets.all(20),
-                                    content: const Text(
-                                        "Are you sure you want to delete?"),
-                                  ));
-                        },
-                        child: ListTile(
-                          leading: const Icon(
-                            Icons.person,
-                            size: 35,
-                            color: Colors.deepPurpleAccent,
-                          ),
-                          title: Text(
-                            name[index],
-                            style: const TextStyle(
-                                color: Colors.blueAccent,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(phone[index]),
-                          trailing: IconButton(
-                            icon: const Icon(
-                              Icons.call,
-                              size: 30,
-                              color: Colors.deepPurpleAccent,
-                            ),
-                            onPressed: () {},
-                          ),
-                          tileColor: Colors.grey.shade100,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    );
-                  },
-                ),
-              )
-            ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }

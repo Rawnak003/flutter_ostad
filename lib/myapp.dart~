@@ -9,6 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Contact List',
+      color: Colors.deepPurpleAccent,
       debugShowCheckedModeBanner: false,
       home: HomePage(),
     );
